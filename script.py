@@ -1,19 +1,28 @@
 import time
 import os
 import requests
-from glob import glob
+import subprocess
+
+interval = os.getenv('INTERVAL', 15)
+path = os.getenv('DATA_PATH', 'tests/data')
+url = os.getenv('UPLOAD_URL', 'test')
 
 
-def upload_periodically(infinite=True):
-    interval = os.getenv('INTERVAL', 15)
-    path = glob(os.path.join(os.getenv('DATA_PATH', 'tests/data'), '*Lysimeter*'))[0]
-    url = os.getenv('UPLOAD_URL', 'test')
+def upload_periodically(infinite=True, read=True):
+
     while True:
-        with open(path, 'rb') as f:
-            requests.post(url, files={'upload_file': f})
+        if read:
+            read_from_sensor()
+        for file_path in os.listdir(path):
+            with open(os.path.join(path, file_path), 'rb') as f:
+                requests.post(url, files={'upload_file': f})
         if not infinite:
             break
         time.sleep(interval*60)
+
+
+def read_from_sensor():
+    subprocess.call(r"wineconsole cmd / c 'Z:\home\uo\wine\DL4CmdLine COM99 /DZ:\home\uo\ngif-sensor\data'")
 
 
 if __name__ == '__main__':
