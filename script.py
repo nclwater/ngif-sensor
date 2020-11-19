@@ -8,9 +8,12 @@ path = os.getenv('DATA_PATH', 'tests/data')
 url = os.getenv('UPLOAD_URL', 'test')
 
 
-def upload_periodically(infinite=True, read=True):
+def upload_periodically(infinite=True, read=True, remove=True):
 
     while True:
+        if remove:
+            for file_path in os.listdir(path):
+                os.remove(os.path.join(path, file_path))
         if read:
             read_from_sensor()
         for file_path in os.listdir(path):
