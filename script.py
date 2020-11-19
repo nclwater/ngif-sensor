@@ -6,6 +6,7 @@ import subprocess
 interval = os.getenv('INTERVAL', 15)
 path = os.getenv('DATA_PATH', 'tests/data')
 url = os.getenv('UPLOAD_URL', 'test')
+sensor_ports = os.getenv('SENSOR_PORTS', '').split()
 
 
 def upload_periodically(infinite=True, read=True, remove=True):
@@ -25,7 +26,8 @@ def upload_periodically(infinite=True, read=True, remove=True):
 
 
 def read_from_sensor():
-    subprocess.call(r"wineconsole cmd / c 'Z:\home\uo\wine\DL4CmdLine COM99 /DZ:\home\uo\ngif-sensor\data'")
+    for port in sensor_ports:
+        subprocess.call(rf"wineconsole cmd / c 'Z:\home\uo\wine\DL4CmdLine {port} /DZ:\home\uo\ngif-sensor\data'")
 
 
 if __name__ == '__main__':
