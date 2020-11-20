@@ -14,15 +14,20 @@ def upload_periodically(infinite=True):
 
     while True:
         for file_path in glob(os.path.join(path, '*(*')):
-            print(f'{datetime.now():%Y-%m-%D %H:%M:%S} Uploading {file_path}')
+            log(f'Uploading {file_path}')
             with open(file_path, 'rb') as f:
                 try:
                     requests.post(url, files={'upload_file': f}).raise_for_status()
+                    log('Done')
                 except Exception as e:
                     warnings.warn(f"Upload failed ({e})'")
         if not infinite:
             break
         time.sleep(interval*60)
+
+
+def log(s):
+    print(f'{datetime.now():%Y-%m-%D %H:%M:%S} {s}')
 
 
 if __name__ == '__main__':

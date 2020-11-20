@@ -6,6 +6,11 @@ from unittest import mock
 def mocked_requests_post(*args, **kwargs):
     assert 'upload_file' in kwargs['files']
 
+    class MockResponse:
+        def raise_for_status(self):
+            return
+    return MockResponse()
+
 
 class TestScript(unittest.TestCase):
 
