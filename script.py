@@ -3,6 +3,7 @@ import os
 import requests
 from glob import glob
 from datetime import datetime
+import warnings
 
 interval = os.getenv('INTERVAL', 15)
 path = os.getenv('DATA_PATH', 'tests/data')
@@ -15,7 +16,10 @@ def upload_periodically(infinite=True):
         for file_path in glob(os.path.join(path, '*(*')):
             print(f'{datetime.now():%Y-%m-%D %H:%M:%S} Uploading {file_path}')
             with open(file_path, 'rb') as f:
-                requests.post(url, files={'upload_file': f})
+                try:
+                    requests.post(url, files={'upload_file': f})
+                except Exception as e:
+                    warnings.warn(f"Upload failed ({e})'")
         if not infinite:
             break
         time.sleep(interval*60)
