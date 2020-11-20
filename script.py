@@ -17,7 +17,7 @@ def upload_periodically(infinite=True):
             print(f'{datetime.now():%Y-%m-%D %H:%M:%S} Uploading {file_path}')
             with open(file_path, 'rb') as f:
                 try:
-                    requests.post(url, files={'upload_file': f})
+                    requests.post(url, files={'upload_file': f}).raise_for_status()
                 except Exception as e:
                     warnings.warn(f"Upload failed ({e})'")
         if not infinite:
