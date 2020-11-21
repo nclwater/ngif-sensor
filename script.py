@@ -39,16 +39,17 @@ def log(s):
 
 def upload_file(file_path):
     name = os.path.basename(file_path)
-    name = name[name.index('(') + 1:name.index('+') - 1 if '+' in name else name.index(')')]
+    name = name[11:-25]
 
     with open(file_path) as f:
         # Update sensors collection
-        sensors.update_one({'name': name}, {'$set': {field: unit for field, unit in zip(
+        sensors.update_one({'name': name}, {'$set': {field.replace('.', '-'): unit for field, unit in zip(
                 f.readline().strip().split('\t'), f.readline().strip().split('\t'))}
         }, upsert=True)
 
     data = pd.read_csv(file_path, sep='\t', parse_dates=[0], dayfirst=True, skiprows=range(1, 2), na_values=['#+INF'])
-    data = data.rename(columns={data.columns[0]: 'time'})
+    data = data.rename(columns={**{data.columns[0]: 'time'},
+                                **{field: field.replace('.', '-') for field in data.columns if '.' in field}})
     # Get the latest inserted time
     last_entry = readings.find_one(
         {'name': name}, {'time': 1},
