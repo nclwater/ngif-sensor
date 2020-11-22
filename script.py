@@ -3,7 +3,6 @@ import os
 import pandas as pd
 from glob import glob
 from datetime import datetime
-import warnings
 from pymongo import MongoClient,  DESCENDING
 
 interval = os.getenv('INTERVAL', 15)
@@ -25,7 +24,7 @@ def upload_periodically(infinite=True, tolerant=True):
                 log('Done')
             except Exception as e:
                 if tolerant:
-                    warnings.warn(f"Upload failed ({e})'")
+                    log(f"Upload failed ({e})'")
                 else:
                     raise e
         if not infinite:
