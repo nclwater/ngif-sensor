@@ -73,7 +73,7 @@ def chunks(lst, n):
 
 def read_file(file_path):
     name = os.path.basename(file_path)
-    name = name[:-25]
+    name = name[:-24]
 
     with open(file_path) as f:
         # Read units
