@@ -40,7 +40,7 @@ class File:
                                      for row in chunk)
 
 
-def upload_periodically(infinite=True, tolerant=True):
+def upload_periodically(infinite=True):
 
     while True:
         files = []
@@ -48,14 +48,8 @@ def upload_periodically(infinite=True, tolerant=True):
             files.append(read_file(file_path))
         for file in files:
             log(f'Uploading {file.path}')
-            try:
-                file.upload()
-                log('Done')
-            except Exception as e:
-                if tolerant:
-                    log(f"Upload failed ({e})'")
-                else:
-                    raise e
+            file.upload()
+            log('Done')
         if not infinite:
             break
         time.sleep(interval*60)

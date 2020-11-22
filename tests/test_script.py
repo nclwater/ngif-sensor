@@ -10,4 +10,4 @@ db.sensors.drop()
 
 class TestScript(unittest.TestCase):
     def test(self, ):
-        script.upload_periodically(infinite=False, tolerant=False)
+        script.upload_periodically(infinite=False)
