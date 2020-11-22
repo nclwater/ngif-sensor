@@ -15,7 +15,7 @@ sensors = db.sensors
 
 
 class File:
-    def __init__(self, name, data, units, path):
+    def __init__(self, name: str, data: pd.DataFrame, units: dict, path: str):
         self.name = name
         self.data = data
         self.units = units
@@ -73,7 +73,7 @@ def chunks(lst, n):
 
 def read_file(file_path):
     name = os.path.basename(file_path)
-    name = name[11:-25]
+    name = name[:-25]
 
     with open(file_path) as f:
         # Read units
