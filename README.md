@@ -5,7 +5,7 @@
 Uploads sensor data to the NGIF API
 
 ## Usage
-`docker run -d -v /home/uo/delta-t:/data --env UPLOAD_URL=http://ngif:5000/upload --env DATA_PATH=/data --name ngif-sensor fmcclean/ngif-sensor` 
+`docker run -d -v /home/uo/delta-t:/data --env MONGO_URI=mongodb://user:password@hostname:27017/database?authSource=admin --env DATA_PATH=/data --restart unless-stopped --name ngif-sensor fmcclean/ngif-sensor ` 
 
 ## Dependencies
 `pip install -r requirements.txt`
