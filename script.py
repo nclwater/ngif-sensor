@@ -77,11 +77,17 @@ def read_file(file_path):
     data = pd.read_csv(file_path, sep='\t', parse_dates=[0], dayfirst=True, skiprows=range(1, 2), na_values=['#+INF'])
     data = data.rename(columns={**{data.columns[0]: 'time'},
                                 **{field: field.replace('.', '-') for field in data.columns if '.' in field}})
+    updated_time = {}
+    latest_value = {}
 
-    updated_time = {col + '.last_updated': data[[col, 'time']].dropna().time.max()
-                    for col in data.columns if col != 'time' and data[col].notnull().any()}
+    for col in data.columns:
+        if col != 'time' and data[col].notnull().any():
+            records = data[[col, 'time']].dropna()
+            last_record = records.loc[[records['time'].idxmax()]].to_dict('records')[0]
+            updated_time[col + '.last_updated'] = last_record['time']
+            latest_value[col + '.last_value'] = last_record[col]
 
-    return File(name, data, {**units, **updated_time}, file_path)
+    return File(name, data, {**units, **updated_time, **latest_value}, file_path)
 
 
 if __name__ == '__main__':
