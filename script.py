@@ -15,14 +15,14 @@ sensors = db.sensors
 
 
 class File:
-    def __init__(self, name: str, data: pd.DataFrame, units: dict, path: str):
+    def __init__(self, name: str, data: pd.DataFrame, metadata: dict, path: str):
         self.name = name
         self.data = data
-        self.units = units
+        self.metadata = metadata
         self.path = path
 
     def upload(self):
-        sensors.update_one({'name': self.name}, {'$set': self.units}, upsert=True)
+        sensors.update_one({'name': self.name}, {'$set': self.metadata}, upsert=True)
 
         # Get the latest inserted time
         last_entry = readings.find_one(
@@ -70,14 +70,18 @@ def read_file(file_path):
     name = name[:-24]
 
     with open(file_path) as f:
-        # Read units
-        units = {field.replace('.', '-'): unit for field, unit in zip(
+        # Read metadata
+        units = {field.replace('.', '-') + '.units': unit for field, unit in zip(
             f.readline().strip().split('\t'), f.readline().strip().split('\t'))}
 
     data = pd.read_csv(file_path, sep='\t', parse_dates=[0], dayfirst=True, skiprows=range(1, 2), na_values=['#+INF'])
     data = data.rename(columns={**{data.columns[0]: 'time'},
                                 **{field: field.replace('.', '-') for field in data.columns if '.' in field}})
-    return File(name, data, units, file_path)
+
+    updated_time = {col + '.last_updated': data[[col, 'time']].dropna().time.max()
+                    for col in data.columns if col != 'time' and data[col].notnull().any()}
+
+    return File(name, data, {**units, **updated_time}, file_path)
 
 
 if __name__ == '__main__':
