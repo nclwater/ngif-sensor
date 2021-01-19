@@ -4,6 +4,7 @@ import pandas as pd
 from glob import glob
 from datetime import datetime
 from pymongo import MongoClient,  DESCENDING
+from io import StringIO
 
 interval = os.getenv('INTERVAL', 15)
 data_path = os.getenv('DATA_PATH', 'tests/data')
@@ -70,11 +71,16 @@ def read_file(file_path):
     name = name[:-24]
 
     with open(file_path) as f:
-        # Read metadata
-        units = {field.replace('.', '-') + '.units': unit for field, unit in zip(
-            f.readline().strip().split('\t'), f.readline().strip().split('\t'))}
+        string = f.read()
 
-    data = pd.read_csv(file_path, sep='\t', parse_dates=[0], dayfirst=True, skiprows=range(1, 2), na_values=['#+INF'])
+    f = StringIO(string[:string.rfind('\n')+1])
+
+    units = {field.replace('.', '-') + '.units': unit for field, unit in zip(
+        f.readline().strip().split('\t'), f.readline().strip().split('\t'))}
+
+    f.seek(0)
+
+    data = pd.read_csv(f, sep='\t', parse_dates=[0], dayfirst=True, skiprows=range(1, 2), na_values=['#+INF'])
     data = data.rename(columns={**{data.columns[0]: 'time'},
                                 **{field: field.replace('.', '-') for field in data.columns if '.' in field}})
     updated_time = {}
