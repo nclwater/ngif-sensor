@@ -80,7 +80,7 @@ def read_file(file_path):
 
     f.seek(0)
 
-    data = pd.read_csv(f, sep='\t', parse_dates=[0], dayfirst=True, skiprows=range(1, 2), na_values=['#+INF'])
+    data = pd.read_csv(f, sep='\t', parse_dates=[0], dayfirst=True, skiprows=range(1, 2), na_values=['#+INF', '#-INF'])
     data = data.rename(columns={**{data.columns[0]: 'time'},
                                 **{field: field.replace('.', '-') for field in data.columns if '.' in field}})
     updated_time = {}
