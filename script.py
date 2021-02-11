@@ -23,7 +23,6 @@ class File:
         self.path = path
 
     def upload(self):
-        sensors.update_one({'name': self.name}, {'$set': self.metadata}, upsert=True)
 
         # Get the latest inserted time
         last_entry = readings.find_one(
@@ -35,6 +34,7 @@ class File:
             self.data = self.data[self.data.time > last_time]
 
         if len(self.data) > 0:
+            sensors.update_one({'name': self.name}, {'$set': self.metadata}, upsert=True)
             # Insert in sets of 1000
             for chunk in chunks(self.data.to_dict('records'), 1000):
                 readings.insert_many({'name': self.name, **{k: v for k, v in row.items() if pd.notna(v)}}
