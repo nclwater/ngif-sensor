@@ -6,7 +6,7 @@ from datetime import datetime
 from pymongo import MongoClient,  DESCENDING
 from io import StringIO
 
-interval = os.getenv('INTERVAL', 15)
+interval = int(os.getenv('INTERVAL', 15))
 data_path = os.getenv('DATA_PATH', 'tests/data')
 mongo_uri = os.getenv('MONGO_URI', 'mongodb://test:password@localhost:27017/test?authSource=admin')
 
