@@ -1,6 +1,6 @@
 # NGIF Sensor
 
-![Tests](https://github.com/fmcclean/ngif-sensor/workflows/Tests/badge.svg)
+![Tests](https://github.com/nclwater/ngif-sensor/workflows/Tests/badge.svg)
 
 Python script that sends sensor data to the NGIF database
 
